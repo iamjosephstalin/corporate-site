@@ -7,6 +7,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, PerspectiveCamera, Environment, ContactShadows, MeshDistortMaterial, MeshTransmissionMaterial } from "@react-three/drei";
 import * as THREE from "three";
 import Lenis from "lenis";
+import AIChat from "./components/AIChat";
 
 // --- Icons & Graphics ---
 
@@ -57,14 +58,63 @@ const Reveal: React.FC<{ children?: ReactNode; delay?: number; className?: strin
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [currentSection, setCurrentSection] = useState('hero');
 
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
+            
+            // Detect current section
+            const scrollPosition = window.scrollY + 100; // Offset for navbar
+            
+            // Check hero section (header element)
+            if (scrollPosition < window.innerHeight * 0.8) {
+                setCurrentSection('hero');
+            } else {
+                const sections = [
+                    { id: 'about', element: document.getElementById('about') },
+                    { id: 'expertise', element: document.getElementById('expertise') },
+                    { id: 'services', element: document.getElementById('services') },
+                    { id: 'process', element: document.getElementById('process') }
+                ];
+                
+                for (const section of sections) {
+                    if (section.element) {
+                        const rect = section.element.getBoundingClientRect();
+                        const elementTop = window.scrollY + rect.top;
+                        const elementBottom = elementTop + rect.height;
+                        
+                        if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
+                            setCurrentSection(section.id);
+                            break;
+                        }
+                    }
+                }
+            }
         };
+        
         window.addEventListener('scroll', handleScroll);
+        handleScroll(); // Call once on mount
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Get background based on current section
+    const getMenuBackground = () => {
+        switch (currentSection) {
+            case 'hero':
+                return 'bg-gradient-to-br from-blue-100/95 via-purple-50/95 to-white/95 backdrop-blur-xl';
+            case 'about':
+                return 'bg-paper/95 backdrop-blur-xl';
+            case 'expertise':
+                return 'bg-paper/95 backdrop-blur-xl';
+            case 'services':
+                return 'bg-paper/95 backdrop-blur-xl';
+            case 'process':
+                return 'bg-gradient-to-br from-stone-50/95 via-stone-100/95 to-paper/95 backdrop-blur-xl';
+            default:
+                return 'bg-paper/95 backdrop-blur-xl';
+        }
+    };
 
     return (
         <nav
@@ -88,7 +138,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Toggle */}
-                <button className="md:hidden flex flex-col gap-1.5 items-end z-50 relative p-2" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Menu">
+                <button className="md:hidden flex flex-col gap-1.5 items-end z-[9999] relative p-2" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Menu">
                     <span className={`h-0.5 bg-ink transition-all duration-300 ease-out ${isOpen ? 'w-6 rotate-45 translate-y-2' : 'w-8'}`}></span>
                     <span className={`h-0.5 bg-ink transition-all duration-300 ease-out ${isOpen ? 'opacity-0' : 'w-6'}`}></span>
                     <span className={`h-0.5 bg-ink transition-all duration-300 ease-out ${isOpen ? 'w-6 -rotate-45 -translate-y-2' : 'w-4'}`}></span>
@@ -96,19 +146,27 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Menu Overlay */}
-            <div className={`fixed inset-0 bg-paper/95 backdrop-blur-xl z-40 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-                <div className="flex flex-col items-center gap-8 p-4 text-center">
-                    {['About', 'Services', 'Process', 'Contact'].map((item, i) => (
-                        <a
-                            key={item}
-                            href={`#${item.toLowerCase()}`}
-                            onClick={() => setIsOpen(false)}
-                            className={`font-serif text-4xl text-ink hover:text-vermilion transition-colors duration-300 transform ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
-                            style={{ transitionDelay: `${i * 100}ms` }}
-                        >
-                            {item}
-                        </a>
-                    ))}
+            <div 
+                className={`fixed top-0 left-0 w-full h-screen ${getMenuBackground()} z-[9998] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+                onClick={() => setIsOpen(false)}
+            >
+                <div 
+                    className="w-full h-full flex items-center justify-center"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="flex flex-col items-center gap-6 sm:gap-8 p-4 text-center max-w-sm mx-auto">
+                        {['About', 'Services', 'Process', 'Contact'].map((item, i) => (
+                            <a
+                                key={item}
+                                href={`#${item.toLowerCase()}`}
+                                onClick={() => setIsOpen(false)}
+                                className={`font-serif text-3xl sm:text-4xl text-ink hover:text-vermilion transition-all duration-300 transform block ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}
+                                style={{ transitionDelay: `${i * 100}ms` }}
+                            >
+                                {item}
+                            </a>
+                        ))}
+                    </div>
                 </div>
             </div>
         </nav >
@@ -1018,4 +1076,9 @@ const App = () => {
 };
 
 const root = createRoot(document.getElementById("root")!);
-root.render(<App />);
+root.render(
+    <>
+        <App />
+        <AIChat />
+    </>
+);
