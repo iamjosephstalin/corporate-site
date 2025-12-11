@@ -169,7 +169,7 @@ const Navbar = () => {
 
                 {/* Desktop Menu */}
                 <div className="hidden md:flex gap-12 items-center">
-                    {['About', 'Services', 'Process', 'Team'].map((item) => (
+                    {['About', 'Services', 'Process', 'Contact'].map((item) => (
                         <a key={item} href={`#${item.toLowerCase()}`} className={`font-sans text-xs font-medium uppercase tracking-widest transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[1px] after:bg-vermilion hover:after:w-full after:transition-all after:duration-500 after:ease-[cubic-bezier(0.25,1,0.3,1)] ${currentSection === item.toLowerCase() ? 'text-vermilion after:w-full' : 'text-ink hover:text-vermilion'}`}>
                             {item}
                         </a>
@@ -1329,7 +1329,7 @@ const Contact = () => {
     };
 
     return (
-        <section id="contact-form" className="py-12 md:py-24 px-6 md:px-12 bg-white relative z-20">
+        <section id="contact" className="py-12 md:py-24 px-6 md:px-12 bg-white relative z-20">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
                 <Reveal>
                     <div>
@@ -1486,7 +1486,7 @@ const Contact = () => {
 
 const Footer = () => {
     return (
-        <footer id="contact" className="bg-paper pt-20 md:pt-32 pb-12 px-6 md:px-12 border-t border-stone/20">
+        <footer className="bg-paper pt-20 md:pt-32 pb-12 px-6 md:px-12 border-t border-stone/20">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 mb-16 md:mb-24">
                 <Reveal>
                     <div>
