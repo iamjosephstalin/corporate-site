@@ -100,56 +100,56 @@ const Navbar = () => {
     const [currentSection, setCurrentSection] = useState('hero');
 
     useEffect(() => {
+        // Optimized scroll handler for navbar background only
         const handleScroll = () => {
-            setScrolled(window.scrollY > 50);
-
-            // Detect current section
-            const scrollPosition = window.scrollY + 100; // Offset for navbar
-
-            // Check hero section (header element)
-            if (scrollPosition < window.innerHeight * 0.8) {
-                setCurrentSection('hero');
-            } else {
-                const sections = [
-                    { id: 'about', element: document.getElementById('about') },
-                    { id: 'expertise', element: document.getElementById('expertise') },
-                    { id: 'services', element: document.getElementById('services') },
-                    { id: 'process', element: document.getElementById('process') }
-                ];
-
-                for (const section of sections) {
-                    if (section.element) {
-                        const rect = section.element.getBoundingClientRect();
-                        const elementTop = window.scrollY + rect.top;
-                        const elementBottom = elementTop + rect.height;
-
-                        if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
-                            setCurrentSection(section.id);
-                            break;
-                        }
-                    }
-                }
+            if (window.scrollY > 50 !== scrolled) {
+                setScrolled(window.scrollY > 50);
             }
         };
 
-        window.addEventListener('scroll', handleScroll);
-        handleScroll(); // Call once on mount
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        // Intersection Observer for section detection
+        const observerOptions = {
+            root: null,
+            rootMargin: '-50% 0px -50% 0px', // Trigger when section is in middle of viewport
+            threshold: 0
+        };
+
+        const observerCallback = (entries: IntersectionObserverEntry[]) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    setCurrentSection(entry.target.id);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+        // Observe all sections
+        ['hero', 'about', 'expertise', 'services', 'process', 'team', 'contact-form'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) observer.observe(element);
+        });
+
+        // Initial check for scroll styling
+        handleScroll();
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            observer.disconnect();
+        };
+    }, [scrolled]);
 
     // Get background based on current section
     const getMenuBackground = () => {
         switch (currentSection) {
             case 'hero':
                 return 'bg-gradient-to-br from-blue-100/95 via-purple-50/95 to-white/95 backdrop-blur-xl';
-            case 'about':
-                return 'bg-paper/95 backdrop-blur-xl';
-            case 'expertise':
-                return 'bg-paper/95 backdrop-blur-xl';
-            case 'services':
-                return 'bg-paper/95 backdrop-blur-xl';
             case 'process':
                 return 'bg-gradient-to-br from-stone-50/95 via-stone-100/95 to-paper/95 backdrop-blur-xl';
+            case 'team':
+                return 'bg-paper/95 backdrop-blur-xl';
             default:
                 return 'bg-paper/95 backdrop-blur-xl';
         }
@@ -169,8 +169,8 @@ const Navbar = () => {
 
                 {/* Desktop Menu */}
                 <div className="hidden md:flex gap-12 items-center">
-                    {['About', 'Services', 'Process', 'Contact'].map((item) => (
-                        <a key={item} href={`#${item.toLowerCase()}`} className="font-sans text-xs font-medium uppercase tracking-widest text-ink hover:text-vermilion transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[1px] after:bg-vermilion hover:after:w-full after:transition-all after:duration-500 after:ease-[cubic-bezier(0.25,1,0.3,1)]">
+                    {['About', 'Services', 'Process', 'Team'].map((item) => (
+                        <a key={item} href={`#${item.toLowerCase()}`} className={`font-sans text-xs font-medium uppercase tracking-widest transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-2 after:left-0 after:w-0 after:h-[1px] after:bg-vermilion hover:after:w-full after:transition-all after:duration-500 after:ease-[cubic-bezier(0.25,1,0.3,1)] ${currentSection === item.toLowerCase() ? 'text-vermilion after:w-full' : 'text-ink hover:text-vermilion'}`}>
                             {item}
                         </a>
                     ))}
@@ -525,7 +525,7 @@ const TechMarquee = () => {
     ];
 
     return (
-        <div className="w-full py-10 bg-white border-y border-stone/10 overflow-hidden relative z-20">
+        <div className="w-full py-8 bg-white border-y border-stone/10 overflow-hidden relative z-20">
             <div className="flex w-max animate-[marquee_80s_linear_infinite]">
                 {[...techs, ...techs, ...techs].map((tech, i) => (
                     <div key={i} className="flex items-center gap-3 mx-8 opacity-80 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0">
@@ -550,7 +550,10 @@ const Hero = () => {
     return (
         <header aria-label="Hero Section" className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 overflow-hidden pt-32 md:pt-0">
             {/* Aurora Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-purple-50 to-white z-0 animate-[gradient_10s_ease_infinite] background-size-[400%_400%]"></div>
+            {/* Aurora Background - Hardware Accelerated */}
+            <div className="absolute inset-0 z-0 overflow-hidden">
+                <div className="absolute inset-[-50%] w-[200%] h-[200%] bg-gradient-to-br from-blue-100 via-purple-50 to-white animate-[spin_60s_linear_infinite] opacity-60 will-change-transform"></div>
+            </div>
 
             {/* High-Tech Background Image - Infinite Zoom Effect */}
             <div className="absolute inset-0 z-0 bg-white">
@@ -620,10 +623,10 @@ const Hero = () => {
 
 const About = () => {
     return (
-        <section id="about" className="py-10 md:py-20 px-6 md:px-12 bg-paper relative">
+        <section id="about" className="py-8 md:py-16 px-6 md:px-12 bg-paper relative">
             <div className="hidden md:block absolute top-0 left-6 md:left-12 w-[1px] h-32 bg-gradient-to-b from-ink/20 to-transparent"></div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-32">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-24">
                 <div className="relative">
                     {/* Decorative circle */}
                     <div aria-hidden="true" className="absolute -top-20 -left-20 w-64 h-64 border border-stone/10 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none hidden md:block"></div>
@@ -667,7 +670,7 @@ const About = () => {
                     ))}
                 </div>
             </div>
-        </section>
+        </section >
     );
 };
 
@@ -729,7 +732,7 @@ const Expertise = () => {
     ];
 
     return (
-        <section id="expertise" className="py-10 md:py-20 px-6 md:px-12 bg-paper text-ink relative z-20">
+        <section id="expertise" className="py-8 md:py-16 px-6 md:px-12 bg-paper text-ink relative z-20">
             <div className="max-w-7xl mx-auto">
                 <Reveal>
                     <div className="text-center mb-20">
@@ -812,7 +815,7 @@ const Services = () => {
     ];
 
     return (
-        <section id="services" className="py-10 md:py-20 px-6 md:px-12 bg-paper text-ink relative z-20">
+        <section id="services" className="py-8 md:py-16 px-6 md:px-12 bg-paper text-ink relative z-20">
             <div className="max-w-7xl mx-auto">
                 <Reveal>
                     <div className="text-center mb-20">
@@ -878,7 +881,7 @@ const IndustrySolutions = () => {
     ];
 
     return (
-        <section className="py-20 px-6 md:px-12 bg-paper text-ink relative overflow-hidden z-20">
+        <section className="py-12 md:py-24 px-6 md:px-12 bg-paper text-ink relative overflow-hidden z-20">
             <div className="max-w-7xl mx-auto">
                 <Reveal>
                     <div className="mb-12">
@@ -896,8 +899,8 @@ const IndustrySolutions = () => {
                                 layout
                                 onClick={() => setActiveId(i)}
                                 animate={{ flex: isActive ? 3 : 1 }}
-                                transition={{ duration: 0.6, ease: [0.25, 1, 0.3, 1] }}
-                                className={`relative rounded-none overflow-hidden cursor-pointer group border-r border-stone/20 last:border-none ${isActive ? 'bg-stone/5' : 'bg-transparent'}`}
+                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                className={`relative rounded-none overflow-hidden cursor-pointer group border-r border-stone/20 last:border-none ${isActive ? 'bg-stone/5' : 'bg-transparent'} will-change-[flex]`}
                             >
                                 {/* Background Gradient (Only visible when active) */}
                                 <AnimatePresence mode="wait">
@@ -1002,7 +1005,7 @@ const CookieConsent = () => {
                         animate={{ y: 0, opacity: 1 }}
                         exit={{ y: 100, opacity: 0 }}
                         transition={{ duration: 0.5, ease: "circOut" }}
-                        className="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:w-[400px] z-[9999]"
+                        className="fixed bottom-6 left-6 right-6 md:right-auto md:w-[400px] z-[9999]"
                     >
                         <div className="bg-white/80 backdrop-blur-md border border-stone/10 p-6 rounded-2xl shadow-2xl shadow-stone/10">
                             <div className="flex items-start gap-4 mb-4">
@@ -1150,7 +1153,7 @@ const Team = () => {
     ];
 
     return (
-        <section id="team" className="py-24 px-6 md:px-12 bg-paper text-ink border-b border-stone/10 section-fade min-h-[50vh] flex flex-col justify-center">
+        <section id="team" className="py-12 md:py-24 px-6 md:px-12 bg-paper text-ink border-b border-stone/10 section-fade min-h-[50vh] flex flex-col justify-center">
             <div className="max-w-7xl mx-auto w-full">
                 <Reveal>
                     <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-stone/20 pb-8">
@@ -1216,7 +1219,7 @@ const Insights = () => {
     ];
 
     return (
-        <section className="py-10 md:py-20 px-6 md:px-12 bg-paper text-ink relative z-20">
+        <section className="py-8 md:py-16 px-6 md:px-12 bg-paper text-ink relative z-20">
             <div className="max-w-7xl mx-auto">
                 <Reveal>
                     <div className="flex justify-between items-end mb-16">
@@ -1254,7 +1257,7 @@ const Process = () => {
     ];
 
     return (
-        <section id="process" className="py-10 md:py-20 px-6 md:px-12 bg-stone/5 text-ink relative overflow-hidden">
+        <section id="process" className="py-8 md:py-16 px-6 md:px-12 bg-stone/5 text-ink relative overflow-hidden">
             {/* Decorative Background */}
             <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(circle_at_center,rgba(0,0,0,0.03)_1px,transparent_1px)] bg-[size:24px_24px]"></div>
 
@@ -1326,7 +1329,7 @@ const Contact = () => {
     };
 
     return (
-        <section id="contact-form" className="py-20 px-6 md:px-12 bg-white relative z-20">
+        <section id="contact-form" className="py-12 md:py-24 px-6 md:px-12 bg-white relative z-20">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24">
                 <Reveal>
                     <div>
@@ -1343,7 +1346,7 @@ const Contact = () => {
                                 </div>
                                 <div>
                                     <h5 className="font-bold text-ink">Email Us</h5>
-                                    <a href="mailto:contact@shichifukutekx.com" className="text-stone hover:text-vermilion transition-colors">contact@shichifukutekx.com</a>
+                                    <a href="mailto:sales@shichifukutekx.ae" className="text-stone hover:text-vermilion transition-colors">sales@shichifukutekx.ae</a>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">
@@ -1735,20 +1738,30 @@ const App = () => {
     const idleTimer = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
+        let lastActivity = Date.now();
+
         const handleActivity = () => {
-            setIs3DVisible(true);
-            if (idleTimer.current) clearTimeout(idleTimer.current);
-            idleTimer.current = setTimeout(() => {
-                setIs3DVisible(false);
-            }, 2000); // Hide after 2 seconds of inactivity
+            const now = Date.now();
+            if (now - lastActivity > 100) { // Throttle to 100ms
+                setIs3DVisible(true);
+                lastActivity = now;
+
+                if (idleTimer.current) clearTimeout(idleTimer.current);
+                idleTimer.current = setTimeout(() => {
+                    setIs3DVisible(false);
+                }, 2000);
+            }
         };
 
         // Listen for mouse move and scroll
-        window.addEventListener('mousemove', handleActivity);
-        window.addEventListener('scroll', handleActivity);
+        window.addEventListener('mousemove', handleActivity, { passive: true });
+        window.addEventListener('scroll', handleActivity, { passive: true });
 
         // Initial trigger
-        handleActivity();
+        setIs3DVisible(true);
+        idleTimer.current = setTimeout(() => {
+            setIs3DVisible(false);
+        }, 2000);
 
         return () => {
             window.removeEventListener('mousemove', handleActivity);
@@ -1759,10 +1772,10 @@ const App = () => {
 
     useEffect(() => {
         const lenis = new Lenis({
-            lerp: 0.07, // Smoother, buttery feel (lowered from 0.1)
-            duration: 1.2,
+            lerp: 0.05, // Lower for more butter/weight
+            duration: 1.5,
             smoothWheel: true,
-            wheelMultiplier: 1.2,
+            wheelMultiplier: 1,
         });
         function raf(time: number) {
             lenis.raf(time);
