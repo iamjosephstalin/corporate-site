@@ -46,7 +46,7 @@ const Reveal: React.FC<{ children?: ReactNode; delay?: number; className?: strin
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.8, delay: delay / 1000, ease: [0.25, 1, 0.3, 1] }}
-            className={className}
+            className={`will-change-transform ${className}`}
         >
             {children}
         </motion.div>
@@ -63,10 +63,10 @@ const Navbar = () => {
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
-            
+
             // Detect current section
             const scrollPosition = window.scrollY + 100; // Offset for navbar
-            
+
             // Check hero section (header element)
             if (scrollPosition < window.innerHeight * 0.8) {
                 setCurrentSection('hero');
@@ -77,13 +77,13 @@ const Navbar = () => {
                     { id: 'services', element: document.getElementById('services') },
                     { id: 'process', element: document.getElementById('process') }
                 ];
-                
+
                 for (const section of sections) {
                     if (section.element) {
                         const rect = section.element.getBoundingClientRect();
                         const elementTop = window.scrollY + rect.top;
                         const elementBottom = elementTop + rect.height;
-                        
+
                         if (scrollPosition >= elementTop && scrollPosition < elementBottom) {
                             setCurrentSection(section.id);
                             break;
@@ -92,7 +92,7 @@ const Navbar = () => {
                 }
             }
         };
-        
+
         window.addEventListener('scroll', handleScroll);
         handleScroll(); // Call once on mount
         return () => window.removeEventListener('scroll', handleScroll);
@@ -146,11 +146,11 @@ const Navbar = () => {
             </div>
 
             {/* Mobile Menu Overlay */}
-            <div 
+            <div
                 className={`fixed top-0 left-0 w-full h-screen ${getMenuBackground()} z-[9998] transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
                 onClick={() => setIsOpen(false)}
             >
-                <div 
+                <div
                     className="w-full h-full flex items-center justify-center"
                     onClick={(e) => e.stopPropagation()}
                 >
@@ -361,7 +361,13 @@ const SpotlightCard = ({ title, date, category, image }: { title: string, date: 
             <div className="relative z-10">
                 <div className="aspect-[4/3] bg-stone/5 mb-6 overflow-hidden rounded-lg relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-stone/5 to-stone/20 group-hover:scale-110 transition-transform duration-700"></div>
-                    <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
+                    <img
+                        src={image}
+                        alt={`${title} - ${category} Report`}
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700"
+                    />
                 </div>
                 <div className="flex items-center gap-4 mb-3">
                     <span className="font-sans text-xs font-bold uppercase tracking-wider text-vermilion bg-vermilion/5 px-2 py-1 rounded-full">{category}</span>
@@ -484,7 +490,13 @@ const TechMarquee = () => {
             <div className="flex w-max animate-[marquee_80s_linear_infinite]">
                 {[...techs, ...techs, ...techs].map((tech, i) => (
                     <div key={i} className="flex items-center gap-3 mx-8 opacity-80 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0">
-                        <img src={tech.logo} alt={tech.name} className="w-8 h-8 object-contain" />
+                        <img
+                            src={tech.logo}
+                            alt={`${tech.name} Logo`}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-8 h-8 object-contain"
+                        />
                         <span className="font-sans text-lg text-ink/80 font-medium tracking-wide">
                             {tech.name}
                         </span>
@@ -497,14 +509,32 @@ const TechMarquee = () => {
 
 const Hero = () => {
     return (
-        <header className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 overflow-hidden pt-32 md:pt-0">
+        <header aria-label="Hero Section" className="relative min-h-screen flex flex-col justify-center px-6 md:px-12 overflow-hidden pt-32 md:pt-0">
             {/* Aurora Background */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-purple-50 to-white z-0 animate-[gradient_10s_ease_infinite] background-size-[400%_400%]"></div>
 
-            {/* High-Tech Background Image */}
-            <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
-                <img src="/hero_bg.png" alt="AI Background" className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/40 to-white/90"></div>
+            {/* High-Tech Background Image - Infinite Zoom Effect */}
+            <div className="absolute inset-0 z-0 bg-white">
+                {[0, 10].map((delay, i) => (
+                    <motion.img
+                        key={i}
+                        src="/hero_bg.webp"
+                        alt="Shichifuku Tekx AI & Digital Solutions Background"
+                        className="absolute inset-0 w-full h-full object-cover opacity-0 will-change-transform"
+                        initial={{ scale: 1, opacity: 0 }}
+                        animate={{
+                            scale: [1, 1.5],
+                            opacity: [0, 1, 0]
+                        }}
+                        transition={{
+                            duration: 20,
+                            repeat: Infinity,
+                            delay: delay,
+                            ease: "linear",
+                        }}
+                    />
+                ))}
+                <div className="absolute inset-0 bg-gradient-to-b from-white/90 via-white/40 to-white/90 pointer-events-none"></div>
             </div>
 
             <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-300/30 rounded-full blur-[120px] animate-[pulse_8s_ease-in-out_infinite]"></div>
@@ -557,7 +587,7 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-32">
                 <div className="relative">
                     {/* Decorative circle */}
-                    <div className="absolute -top-20 -left-20 w-64 h-64 border border-stone/10 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none hidden md:block"></div>
+                    <div aria-hidden="true" className="absolute -top-20 -left-20 w-64 h-64 border border-stone/10 rounded-full animate-[spin_60s_linear_infinite] pointer-events-none hidden md:block"></div>
                     <Reveal>
                         <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-ink leading-tight mb-8">
                             The Logic<br />Behind Luck
@@ -699,40 +729,46 @@ const Expertise = () => {
 const Services = () => {
     const serviceCategories = [
         {
-            title: "Web Platforms",
-            desc: "Bespoke digital environments. We craft high-performance websites using Next.js and WebGL that serve as your 24/7 global embassy.",
-            items: ["React", "Next.js", "Three.js"],
+            title: "Bespoke Digital Platforms & SaaS",
+            desc: "We engineer scalable internal and external web applications using Next.js and React. Our focus is building high-performance systems for critical operations (e.g., supplier management, QMS) based on a standardized process framework to ensure high user adoption and data integrity.",
+            items: ["SaaS Development", "Next.js Customization", "Operational Web Apps", "B2B Portal Development", "System Integration", "React/Node.js"],
             gradient: "bg-gradient-to-br from-blue-400/40 via-transparent to-purple-500/40"
         },
         {
-            title: "Mobile Apps",
-            desc: "Native iOS and Android ecosystems. Seamless, intuitive, and robust applications that place your brand in the user's hand.",
-            items: ["React Native", "Swift", "Kotlin"],
+            title: "Native Mobile & Field Applications",
+            desc: "Custom iOS and Android applications designed to digitize field services and remote operations. We enable real-time process control and data capture (reducing defects and waste) and provide executives with secure, real-time performance dashboards.",
+            items: ["Mobile Operations App", "Native iOS/Android", "Field Service Digitization", "Real-Time KPI Dashboards", "Secure Mobile Solutions"],
             gradient: "bg-gradient-to-br from-green-400/40 via-transparent to-teal-500/40"
         },
         {
-            title: "Brand Identity",
-            desc: "Visual storytelling. From logo design to comprehensive style guides, we forge identities that command respect and trust.",
-            items: ["Strategy", "Design", "Typography"],
+            title: "Brand Identity & Experience Design",
+            desc: "Crafting visual identities and user experiences that build trust and reflect your modern, data-driven methodology. Our design philosophy ensures compliance, clarity, and consistency across all digital touchpoints.",
+            items: ["B2B Brand Strategy", "UX/UI Design", "Corporate Identity", "Digital Experience (DX) Consulting", "Design for Trust"],
             gradient: "bg-gradient-to-br from-orange-400/40 via-transparent to-red-500/40"
         },
         {
-            title: "AI Integration",
-            desc: "Operational intelligence. Implementing LLMs and automation scripts to reduce overhead and multiply output.",
-            items: ["OpenAI", "Python", "Automation"],
+            title: "AI Agent Development & Automation",
+            desc: "Designing, building, and deploying specialized AI Agents and Large Language Model (LLM) applications to perform complex operational tasks, dramatically reduce overhead, and multiply output. Our implementation is based on validated Lean Six Sigma process mapping to ensure agent efficiency and compliance.",
+            items: ["AI Agent Building", "LLM Development", "Process Mining", "Intelligent Automation", "Generative AI for Business", "RAG Architecture"],
             gradient: "bg-gradient-to-br from-indigo-400/40 via-transparent to-pink-500/40"
         },
         {
-            title: "E-Commerce",
-            desc: "Digital marketplaces. Secure, high-conversion storefronts designed to maximize average order value.",
-            items: ["Shopify", "Stripe", "Custom"],
+            title: "E-Commerce Operations Optimization",
+            desc: "Building high-conversion B2B and B2C platforms with a deep focus on back-end operational efficiency. We apply Lean Supply Chain principles to inventory forecasting, order fulfillment, and logistics integration to guarantee reduced cost-to-serve.",
+            items: ["E-Commerce B2B/B2C", "Supply Chain Optimization", "Inventory Management AI", "Headless Commerce", "Fulfillment Process Improvement"],
             gradient: "bg-gradient-to-br from-yellow-400/40 via-transparent to-amber-500/40"
         },
         {
-            title: "Digital Growth",
-            desc: "Growth signals. Data-driven campaigns that target the right audience with surgical precision.",
-            items: ["SEO", "PPC", "Analytics"],
+            title: "Digital Growth & Performance Strategy",
+            desc: "Accelerating growth by optimizing the entire digital customer lifecycle and delivery funnel. We use data-driven process analysis (like Six Sigma) to ensure marketing, sales, and service processes deliver the highest possible conversion and lifetime value (LTV).",
+            items: ["Digital Growth Strategy", "Full-Funnel Optimization", "Marketing Automation", "Data-Driven Performance", "Customer Journey Analytics"],
             gradient: "bg-gradient-to-br from-cyan-400/40 via-transparent to-blue-500/40"
+        },
+        {
+            title: "DevOps & MLOps Consulting",
+            desc: "Establishing highly efficient, automated pipelines for continuous delivery and deployment (CI/CD). We integrate DevOps principles with MLOps to ensure your AI models and digital platforms are scalable, stable, and meet rigorous ISO standards for quality and security.",
+            items: ["DevOps Pipeline", "MLOps Strategy", "CI/CD Implementation", "Cloud Infrastructure", "Automated Testing", "Security by Design"],
+            gradient: "bg-gradient-to-br from-slate-400/40 via-transparent to-emerald-500/40"
         }
     ];
 
@@ -951,7 +987,13 @@ const Footer = () => {
                     </Reveal>
 
                     <Reveal delay={400} className="hidden md:block">
-                        <img src="/logo.png" alt="ShichifukuTekx" className="w-32 h-auto mt-12 opacity-80 hover:opacity-100 transition-opacity duration-500" />
+                        <img
+                            src="/logo.png"
+                            alt="ShichifukuTekx Logo"
+                            loading="lazy"
+                            decoding="async"
+                            className="w-32 h-auto mt-12 opacity-80 hover:opacity-100 transition-opacity duration-500"
+                        />
                     </Reveal>
                 </div>
             </div>
@@ -1028,12 +1070,52 @@ const WhoWeAre = () => {
     );
 };
 
+const StructuredData = () => {
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Shichifuku Tekx FZE",
+        "url": "https://shichifukutekx.com",
+        "logo": "https://shichifukutekx.com/logo.png",
+        "description": "Shichifuku Tekx FZE: Transforming businesses in Dubai, UAE, Saudi Arabia, and the GCC with cutting-edge AI strategy, custom software development, and intelligent automation.",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+971 50 000 0000",
+            "contactType": "customer service",
+            "areaServed": ["AE", "SA", "QA", "OM", "KW"],
+            "availableLanguage": ["en", "ar"]
+        },
+        "sameAs": [
+            "https://www.linkedin.com/company/shichifukutekx",
+            "https://twitter.com/shichifukutekx",
+            "https://www.instagram.com/shichifukutekx"
+        ],
+        "knowsAbout": [
+            "Artificial Intelligence",
+            "Software Development",
+            "Process Optimization",
+            "Machine Learning",
+            "Web Development",
+            "Mobile App Development",
+            "LLM Applications"
+        ]
+    };
+
+    return (
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+    );
+};
+
 const App = () => {
     useEffect(() => {
         const lenis = new Lenis({
-            lerp: 0.1, // Snappy response
+            lerp: 0.07, // Smoother, buttery feel (lowered from 0.1)
             duration: 1.2,
             smoothWheel: true,
+            wheelMultiplier: 1.2,
         });
         function raf(time: number) {
             lenis.raf(time);
@@ -1047,6 +1129,7 @@ const App = () => {
 
     return (
         <main className="w-full bg-paper text-ink font-sans selection:bg-vermilion selection:text-paper overflow-x-hidden antialiased cursor-none relative">
+            <StructuredData />
             <CustomCursor />
 
             {/* Global 3D Background - Foreground Layer */}
