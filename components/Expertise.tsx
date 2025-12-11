@@ -36,7 +36,7 @@ const Expertise = () => {
                 <Reveal>
                     <div className="text-center mb-20">
                         <img src="/icon.png" alt="Expertise Icon" className="mb-6 mx-auto w-16 h-16 object-contain opacity-80" />
-                        <h2 className="font-serif text-4xl md:text-6xl mb-4">AI Expertise</h2>
+                        <Reveal tag="h2" className="font-serif text-4xl md:text-6xl mb-4">AI Expertise</Reveal>
                         <p className="font-sans text-stone uppercase tracking-widest text-sm">Intelligent Solutions</p>
                     </div>
                 </Reveal>

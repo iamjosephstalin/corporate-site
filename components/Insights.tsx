@@ -30,7 +30,7 @@ const Insights = () => {
                 <Reveal>
                     <div className="flex justify-between items-end mb-16">
                         <div>
-                            <h2 className="font-serif text-3xl md:text-5xl mb-4">Latest Insights</h2>
+                            <Reveal tag="h2" className="font-serif text-3xl md:text-5xl mb-4">Latest Insights</Reveal>
                             <p className="font-sans text-stone uppercase tracking-widest text-sm">Trends & Analysis</p>
                         </div>
                         <a href="#" className="hidden md:block font-sans text-sm uppercase tracking-widest hover:text-vermilion transition-colors">View All &rarr;</a>

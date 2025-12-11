@@ -84,7 +84,7 @@ const Services = () => {
                 <Reveal>
                     <div className="text-center mb-20">
                         <img src="/icon.png" alt="Services Icon" className="mb-6 mx-auto w-16 h-16 object-contain opacity-80" />
-                        <h2 className="font-serif text-4xl md:text-6xl mb-4">Digital Services</h2>
+                        <Reveal tag="h2" className="font-serif text-4xl md:text-6xl mb-4">Digital Services</Reveal>
                         <p className="font-sans text-stone uppercase tracking-widest text-sm">Web & Mobile Development</p>
                     </div>
                 </Reveal>

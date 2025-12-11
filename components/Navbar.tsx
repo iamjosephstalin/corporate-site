@@ -33,7 +33,7 @@ const Navbar = () => {
         const observer = new IntersectionObserver(observerCallback, observerOptions);
 
         // Observe all sections
-        ['hero', 'about', 'expertise', 'services', 'process', 'team', 'contact-form'].forEach(id => {
+        ['hero', 'about', 'expertise', 'services', 'process', 'team', 'contact'].forEach(id => {
             const element = document.getElementById(id);
             if (element) observer.observe(element);
         });

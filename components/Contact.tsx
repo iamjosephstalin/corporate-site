@@ -49,7 +49,7 @@ const Contact = () => {
                 <Reveal>
                     <div>
                         <span className="font-sans text-vermilion text-xs font-bold uppercase tracking-widest mb-6 block">Get in Touch</span>
-                        <h2 className="font-serif text-4xl md:text-6xl text-ink mb-8">Ready to <span className="italic text-stone/40">Accelerate?</span></h2>
+                        <Reveal tag="h2" className="font-serif text-4xl md:text-6xl text-ink mb-8">Ready to <span className="italic text-stone/40">Accelerate?</span></Reveal>
                         <p className="font-sans text-lg text-ink/70 leading-relaxed mb-12 max-w-md">
                             Whether you need a strategic AI audit or a full-scale digital transformation, our team in Ajman is ready to deploy.
                         </p>

@@ -20,10 +20,10 @@ const WhoWeAre = () => {
                 <Reveal>
                     <div className="relative z-10">
                         <span className="font-sans text-vermilion text-xs font-bold uppercase tracking-widest mb-6 block">Our DNA</span>
-                        <h2 className="font-serif text-5xl md:text-7xl leading-[0.9] mb-8">
+                        <Reveal tag="h2" className="font-serif text-5xl md:text-7xl leading-[0.9] mb-8">
                             Bridging the <br />
                             <span className="text-stone/30 italic">Global Gap.</span>
-                        </h2>
+                        </Reveal>
                         <p className="font-sans text-lg md:text-xl leading-relaxed text-ink/80 mb-8 max-w-lg">
                             Shichifuku Tekx operates from the <span className="font-bold text-ink">Ajman Free Zone</span>, fusing Japanese precision with Gulf business intelligence. We don't just build software; we engineer digital sovereignty.
                         </p>

@@ -5,13 +5,14 @@ const StructuredData = () => {
         "@context": "https://schema.org",
         "@graph": [
             {
-                "@type": "ProfessionalService",
+                "@type": ["Organization", "ProfessionalService"],
                 "@id": "https://shichifukutekx.com/#organization",
-                "name": "Shichifuku Tekx FZE",
+                "name": "Shichifuku Tekx",
+                "alternateName": "Shichifuku Tekx FZE",
                 "url": "https://shichifukutekx.com",
                 "logo": "https://shichifukutekx.com/logo.png",
-                "image": "https://shichifukutekx.com/hero-image.jpg", // Add a real hero image URL here
-                "description": "Shichifuku Tekx FZE: Transforming businesses in Dubai, UAE, Saudi Arabia, and the GCC with cutting-edge AI strategy, custom software development, and intelligent automation.",
+                "image": "https://shichifukutekx.com/hero_bg.webp",
+                "description": "Shichifuku Tekx: Premier AI strategy and custom software development in Dubai & GCC. Empowering businesses with intelligent automation.",
                 "priceRange": "$$$",
                 "address": {
                     "@type": "PostalAddress",

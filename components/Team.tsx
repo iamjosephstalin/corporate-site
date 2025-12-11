@@ -36,7 +36,7 @@ const Team = () => {
                 <Reveal>
                     <div className="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-stone/20 pb-8">
                         <div>
-                            <h2 className="font-serif text-5xl md:text-7xl mb-2">Leadership</h2>
+                            <Reveal tag="h2" className="font-serif text-5xl md:text-7xl mb-2">Leadership</Reveal>
                             <p className="font-sans text-stone uppercase tracking-widest text-sm">The Human Intelligence</p>
                         </div>
                         <div className="font-sans text-stone text-sm max-w-sm text-right hidden md:block">

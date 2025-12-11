@@ -31,10 +31,8 @@ const Hero = () => {
                     </div>
                 </Reveal>
 
-                <Reveal delay={200}>
-                    <h1 className="font-sans font-medium text-4xl md:text-6xl lg:text-7xl leading-[1.1] text-ink/90 tracking-tight select-none mb-6 drop-shadow-sm">
-                        Empowering Dubai, UAE Businesses with <span className="font-serif italic text-vermilion">Intelligent AI Solutions</span>
-                    </h1>
+                <Reveal delay={200} tag="h1" className="font-sans font-medium text-4xl md:text-6xl lg:text-7xl leading-[1.1] text-ink/90 tracking-tight select-none mb-6 drop-shadow-sm">
+                    Empowering Dubai, UAE Businesses with <span className="font-serif italic text-vermilion">Intelligent AI Solutions</span>
                 </Reveal>
 
                 <Reveal delay={300}>

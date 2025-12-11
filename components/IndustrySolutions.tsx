@@ -45,7 +45,7 @@ const IndustrySolutions = () => {
             <div className="max-w-7xl mx-auto">
                 <Reveal>
                     <div className="mb-12">
-                        <h2 className="font-serif text-4xl md:text-6xl mb-4 text-ink">Industry Solutions</h2>
+                        <Reveal tag="h2" className="font-serif text-4xl md:text-6xl mb-4 text-ink">Industry Solutions</Reveal>
                         <p className="font-sans text-stone uppercase tracking-widest text-sm">Tailored for Key Sectors</p>
                     </div>
                 </Reveal>

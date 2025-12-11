@@ -1,9 +1,11 @@
 import React, { ReactNode } from "react";
 import { motion } from "framer-motion";
 
-const Reveal: React.FC<{ children?: ReactNode; delay?: number; className?: string }> = ({ children, delay = 0, className = "" }) => {
+const Reveal: React.FC<{ children?: ReactNode; delay?: number; className?: string; tag?: keyof React.JSX.IntrinsicElements }> = ({ children, delay = 0, className = "", tag = "div" }) => {
+    const MotionComponent = motion[tag as keyof typeof motion] as any || motion.div;
+
     return (
-        <motion.div
+        <MotionComponent
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -11,7 +13,7 @@ const Reveal: React.FC<{ children?: ReactNode; delay?: number; className?: strin
             className={`will-change-transform ${className}`}
         >
             {children}
-        </motion.div>
+        </MotionComponent>
     );
 };
 
