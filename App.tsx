@@ -7,7 +7,7 @@ import Lenis from "lenis";
 // Components (Above the fold - Imported directly)
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import CustomCursor from "./components/CustomCursor";
+
 import StructuredData from "./components/StructuredData";
 import AIChat from "./components/AIChat";
 import Experience from "./components/Experience"; // 3D Component
@@ -84,9 +84,9 @@ const App = () => {
     }, []);
 
     return (
-        <main className="w-full bg-paper text-ink font-sans selection:bg-vermilion selection:text-paper overflow-x-hidden antialiased cursor-none relative">
+        <main className="w-full bg-paper text-ink font-sans selection:bg-vermilion selection:text-paper overflow-x-hidden antialiased relative">
             <StructuredData />
-            <CustomCursor />
+
 
             {/* Global 3D Background - Foreground Layer */}
             {/* Optimization: Conditionally render the simplified 3D scene or use visibility to avoid GPU overhead when idle */}
