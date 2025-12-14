@@ -19,7 +19,7 @@ const Process = () => {
                 <Reveal>
                     <div className="text-center mb-16 md:mb-24">
                         <img src="/icon.png" alt="Process Icon" className="mb-6 md:mb-8 mx-auto w-16 h-16 object-contain opacity-80" />
-                        <Reveal tag="h2" className="font-serif text-4xl md:text-7xl mb-4">The Methodology</Reveal>
+                        <Reveal tag="h2" className="font-serif text-4xl md:text-7xl mb-4">Our Agile Methodology</Reveal>
                         <p className="font-sans text-stone uppercase tracking-widest text-sm">From Chaos to Order</p>
                     </div>
                 </Reveal>
